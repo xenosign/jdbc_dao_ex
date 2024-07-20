@@ -31,9 +31,9 @@ CREATE TABLE user_info
     id   INT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     # user 테이블의 id 와 user_info 의 id 가 서로 참조하는 관계임을 외래키로 설정
-        FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE
-        # JOIN 문 연습을 위해, 억지로 만든 테이블이며 해당 테이블은 제2 정규형을(2NF)를 위배합니다
-        # name 컬럼도 id 에 종속이기 때문에 해당 테이블은 굳이 따로 나눌 필요가 없기 때문입니다
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
+    # JOIN 문 연습을 위해, 억지로 만든 테이블이며 해당 테이블은 제2 정규형을(2NF)를 위배합니다
+    # name 컬럼도 id 에 종속이기 때문에 해당 테이블은 굳이 따로 나눌 필요가 없기 때문입니다
 );
 
 # 생성한 user 테이블 확인
@@ -45,3 +45,8 @@ INSERT INTO user_info (id, name)
 VALUES ('1', '이효석'),
        ('2', '김시완'),
        ('3', '나건우');
+
+SELECT users.id, users.email, users.password, user_info.name
+FROM users
+         JOIN user_info
+              ON users.id = user_info.id;

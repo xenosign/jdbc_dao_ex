@@ -37,8 +37,7 @@ public class UserDao {
     public void create(String email, String password) {
         String sql = "INSERT INTO users (email, password) VALUES (?, ?)";
 
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, email);
             pstmt.setString(2, password);
@@ -52,8 +51,6 @@ public class UserDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
     }
 
@@ -62,8 +59,7 @@ public class UserDao {
         List<UserVo> userList = new ArrayList<>();
         String sql = "SELECT id, email, password FROM users";
 
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -77,8 +73,68 @@ public class UserDao {
             userList.forEach((user) -> System.out.println(user));
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close();
+        }
+    }
+
+    // 회원 정보를 수정하는 메서드
+    public void updateUser(int id, String newEmail, String newPassword) {
+        String sql = "UPDATE users SET email = ?, password = ? WHERE id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, newEmail);
+            pstmt.setString(2, newPassword);
+            pstmt.setInt(3, id);
+
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("회원 정보 수정 성공!");
+            } else {
+                System.out.println("회원 정보 수정 실패");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 회원 정보를 삭제하는 메서드
+    public void deleteUser(int id) {
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("회원 삭제 성공!");
+            } else {
+                System.out.println("회원 삭제 실패");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 테이블을 합친 뒤, 회원의 이름 정보까지 전부 출력하는 메서드
+    public void getAllUsersWithName() {
+        String sql = "SELECT users.id, users.email, users.password, user_info.name " +
+                "FROM users " +
+                "JOIN user_info ON users.id = user_info.id";
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String email = rs.getString("email");
+                String password = rs.getString("password");
+                String name = rs.getString("name");
+
+                System.out.printf("ID: %d, Email: %s, Password: %s, Name: %s%n", id, email, password, name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
