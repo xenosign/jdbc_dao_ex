@@ -6,7 +6,7 @@ import java.util.List;
 
 public class UserDao {
     // 사용자 정보를 데이터베이스에 삽입하는 메서드
-    public void create(UserVo newUser) {
+    public void addUser(UserVo newUser) {
         try {
             // 1. Driver 커넥터 설정
             String driver = "com.mysql.cj.jdbc.Driver";
