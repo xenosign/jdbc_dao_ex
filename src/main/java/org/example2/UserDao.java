@@ -74,14 +74,27 @@ public class UserDao {
     }
 
     // 회원 정보를 수정하는 메서드
-    public void updateUser(int id, String newEmail, String newPassword) {
-        String sql = "UPDATE users SET email = ?, password = ? WHERE id = ?";
+    public void updateUser(int userid, String newEmail, String newPassword) {
+        try {
+            // 1. Driver 커넥터 설정
+            String driver = "com.mysql.cj.jdbc.Driver";
+            Class.forName(driver);
+            System.out.println("1. 드라이버 설정 OK");
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // 2. DB 연결
+            String url = "jdbc:mysql://localhost:3306/user_ex";
+            String id = "root";
+            String password = "1234";
+            Connection conn = DriverManager.getConnection(url, id, password);
+
+
+            String sql = "UPDATE users SET email = ?, password = ? WHERE id = ?";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, newEmail);
             pstmt.setString(2, newPassword);
-            pstmt.setInt(3, id);
+            pstmt.setInt(3, userid);
 
             int affectedRows = pstmt.executeUpdate();
 
@@ -90,17 +103,28 @@ public class UserDao {
             } else {
                 System.out.println("회원 정보 수정 실패");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     // 회원 정보를 삭제하는 메서드
-    public void deleteUser(int id) {
-        String sql = "DELETE FROM users WHERE id = ?";
+    public void deleteUser(int userid) {
+        try {
+            // 1. Driver 커넥터 설정
+            String driver = "com.mysql.cj.jdbc.Driver";
+            Class.forName(driver);
+            System.out.println("1. 드라이버 설정 OK");
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
+            // 2. DB 연결
+            String url = "jdbc:mysql://localhost:3306/user_ex";
+            String id = "root";
+            String password = "1234";
+            Connection conn = DriverManager.getConnection(url, id, password);
+            String sql = "DELETE FROM users WHERE id = ?";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, userid);
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
@@ -108,40 +132,40 @@ public class UserDao {
             } else {
                 System.out.println("회원 삭제 실패");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     // 테이블을 합친 뒤, 회원의 이름 정보까지 전부 출력하는 메서드
     public void getAllUsersWithName() {
-        String sql = "SELECT users.id, users.email, users.password, user_info.name " +
-                "FROM users " +
-                "JOIN user_info ON users.id = user_info.id";
+        try {
+            // 1. Driver 커넥터 설정
+            String driver = "com.mysql.cj.jdbc.Driver";
+            Class.forName(driver);
+            System.out.println("1. 드라이버 설정 OK");
 
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+            // 2. DB 연결
+            String url = "jdbc:mysql://localhost:3306/user_ex";
+            String id = "root";
+            String password = "1234";
+            Connection conn = DriverManager.getConnection(url, id, password);
+            String sql = "SELECT users.id, users.email, users.password, user_info.name " +
+                    "FROM users " +
+                    "JOIN user_info ON users.id = user_info.id";
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                int id = rs.getInt("id");
+                int userid = rs.getInt("id");
                 String email = rs.getString("email");
-                String password = rs.getString("password");
+                String userpassword = rs.getString("password");
                 String name = rs.getString("name");
 
-                System.out.printf("ID: %d, Email: %s, Password: %s, Name: %s%n", id, email, password, name);
+                System.out.printf("ID: %d, Email: %s, Password: %s, Name: %s%n", userid, email, userpassword, name);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void close() {
-        try {
-            if (conn != null) {
-                conn.close();
-                conn = null;
-            }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
