@@ -12,9 +12,18 @@ CREATE TABLE users
     password VARCHAR(100)        NOT NULL
 );
 
+CREATE TABLE members
+(
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    VARCHAR(100) UNIQUE NOT NULL,
+    password   VARCHAR(100)        NOT NULL,
+    address    VARCHAR(100)        NOT NULL
+);
+
 # 생성한 user 테이블 확인
 SELECT *
 FROM users;
+
 
 # user 테이블에 회원 정보 삽입
 # id 값은 자동으로 생성되므로 전달 필요 X
